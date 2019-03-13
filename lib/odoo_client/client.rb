@@ -14,7 +14,7 @@ module OdooClient
 
 			@uid = @common.call('authenticate', @db, username, @password, {})
 
-			raise AuthenticationError.new unless @uid == 1
+			raise AuthenticationError.new if @uid == false
 		end
 
 		def version
@@ -23,7 +23,7 @@ module OdooClient
 
 		def count_records(model_name, filters=[])
 			models.execute_kw(@db, @uid, @password, model_name, 'search_count', [filters], {})
-		end	
+		end
 
 		def list_records(model_name, filters=[])
 			models.execute_kw(@db, @uid, @password, model_name, 'search', [filters], {})
@@ -59,12 +59,12 @@ module OdooClient
 		def find(model_name, id, select_fields=[])
 			result = read_records(model_name, [["id", "=", id]], select_fields)
 			result[0] unless result.empty?
-		end	
+		end
 
 		private
 			def models
 				@models ||= XMLRPC::Client.new2("#{@url}/xmlrpc/2/object").proxy
 			end
 
-	end	
+	end
 end
